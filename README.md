@@ -70,6 +70,6 @@ For a quick comparison of matching rules across common crawlers, use the [free A
 
 - [OpenAI: OAI-SearchBot](https://platform.openai.com/docs/bots#oai-searchbot)
 - [OpenAI: GPTBot](https://platform.openai.com/docs/bots#gptbot)
-- [Google: Google-Extended](https://developers.google.com/crawling/docs/crawlers-fetchers/google-extended)
+- [Google: crawlers and fetchers](https://developers.google.com/crawling/docs/crawlers-fetchers/overview)
 - [Anthropic: ClaudeBot](https://support.anthropic.com/en/articles/8896518-does-anthropic-crawl-the-web)
 - [Google: robots.txt introduction](https://developers.google.com/search/docs/crawling-indexing/robots/intro)
