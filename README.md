@@ -1,10 +1,10 @@
 # AI crawler robots.txt reference
 
-Practical `robots.txt` examples for separating AI search access from model training access.
+Practical `robots.txt` examples for controlling AI crawler access.
 
-## Allow ChatGPT Search and block training crawlers
+## Allow ChatGPT Search, block training crawlers
 
-This example allows OpenAI's search crawler while blocking several training or answer crawlers. Review each vendor's current documentation before publishing it on a production site.
+This example allows OpenAI's search crawler while blocking training and answer crawlers from OpenAI, Google, Anthropic, and Perplexity:
 
 ```text
 User-agent: OAI-SearchBot
@@ -26,11 +26,13 @@ User-agent: *
 Allow: /
 ```
 
-The specific groups target the named crawlers. The final group leaves ordinary crawlers allowed. Add path-specific rules when only part of a site should be available.
+The specific groups target named crawlers. The final wildcard group leaves ordinary crawlers allowed. More specific `User-agent` rules override the wildcard for the named crawler.
 
-## Block the named AI crawlers
+Search crawlers such as OAI-SearchBot retrieve content for citation in answers. Training crawlers such as GPTBot, Google-Extended, and ClaudeBot may use content for model training. The distinction depends on each vendor's declared use.
 
-Use this pattern when the site should remain available to ordinary crawlers but the named AI crawlers should not fetch it voluntarily.
+## Block all named AI crawlers
+
+Use this when the site should remain available to ordinary crawlers but named AI crawlers should not fetch it voluntarily:
 
 ```text
 User-agent: OAI-SearchBot
@@ -52,19 +54,33 @@ User-agent: *
 Allow: /
 ```
 
-## Check the result
+## What robots.txt does and does not do
 
-A `robots.txt` file expresses a request to cooperative crawlers. It does not authenticate the crawler, prevent direct requests, control indexing by itself, or prove that a crawler visited the site. Check the public file after deployment and inspect server or CDN logs separately.
+**Does:**
+- Express a request to cooperative crawlers
+- Specify which paths each user agent may fetch
 
-For a quick comparison of matching rules across common crawlers, use the [free AI Crawler Access Checker](https://www.firmbeacon.co.uk/tools/ai-crawler-check?utm_source=github&utm_medium=readme&utm_campaign=ai_crawler_reference). It reports the rule that matches each selected user agent. It does not verify firewall access, indexing, citations or whether a crawler actually fetched a page.
+**Does not:**
+- Authenticate crawlers or prevent direct requests
+- Control indexing by itself. `noindex`, canonicals, and HTTP status still apply.
+- Prove whether a crawler actually visited
+- Block access at the network or firewall level
 
-## Important details
+`robots.txt` is a public file. Do not put secrets, internal paths, or confidential policy in it.
 
-- A more specific `User-agent` group is evaluated for the named crawler instead of the wildcard group.
-- `Allow: /` does not make a site indexable. `noindex`, authentication, HTTP errors and canonical signals still matter.
-- `robots.txt` is public. Do not put secrets, internal paths or confidential policy in it.
-- Test the file at the exact public hostname and protocol that your site uses.
-- Vendor tokens and policies can change. Keep this reference checked against official documentation.
+## Verification checklist
+
+- [ ] File is accessible at `https://yourdomain.com/robots.txt`
+- [ ] Syntax is correct, with no extra spaces and valid `User-agent:` and `Disallow:` lines
+- [ ] The wildcard group (`User-agent: *`) comes after specific rules
+- [ ] Rules match current vendor documentation
+- [ ] Server logs confirm that the file is served with the `text/plain` content type
+
+Test at the exact public hostname and protocol your site uses.
+
+## Check matching rules
+
+For a quick comparison of which rule matches each crawler, use the [AI Crawler Access Checker](https://www.firmbeacon.co.uk/tools/ai-crawler-check?utm_source=github&utm_medium=readme&utm_campaign=ai_crawler_reference). It reports the matching rule for selected user agents. It does not verify firewall access, indexing, or actual crawler visits.
 
 ## Official documentation
 
@@ -73,3 +89,5 @@ For a quick comparison of matching rules across common crawlers, use the [free A
 - [Google: crawlers and fetchers](https://developers.google.com/crawling/docs/crawlers-fetchers/overview)
 - [Anthropic: ClaudeBot](https://support.anthropic.com/en/articles/8896518-does-anthropic-crawl-the-web)
 - [Google: robots.txt introduction](https://developers.google.com/search/docs/crawling-indexing/robots/intro)
+
+Vendor tokens and policies can change. Check official documentation before deploying to production.
